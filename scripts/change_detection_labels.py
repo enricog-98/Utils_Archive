@@ -2,7 +2,7 @@ import os
 from tqdm import tqdm
 
 
-def change_label(dataset_folder: str, source_label: str, target_label: str):
+def change_detection_labels(dataset_folder: str, source_label: str, target_label: str):
     """Change the label of all objects with the source label to the target label in the dataset."""
     for dataset_partition in ["train", "val", "test"]:
         labels_folder = os.path.join(dataset_folder, dataset_partition, "labels")
@@ -32,4 +32,4 @@ if __name__ == "__main__":
     source_label = "0"
     target_label = "1"
     
-    change_label(dataset_folder, source_label, target_label)
+    change_detection_labels(dataset_folder, source_label, target_label)
