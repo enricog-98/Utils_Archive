@@ -1,23 +1,23 @@
 import os
 import cv2
+from tqdm import tqdm
 
 
-def extract_classes_from_dataset(dataset_path):
-    """Extracts instances of each class from a detection dataset, transforming it into a classification dataset."""
-    subsets = ["train", "valid", "test"]
-    
-    for subset in subsets:
-        images_path = os.path.join(dataset_path, subset, "images")
-        labels_path = os.path.join(dataset_path, subset, "labels")
-        output_path = os.path.join(dataset_path, "extracted")
+def extract_classification_dataset(dataset_folder: str):
+    """Extracts instances of each class from a detection dataset, transforming it into a classification dataset."""    
+    for dataset_partition in ["train", "val", "test"]:
+        images_path = os.path.join(dataset_folder, dataset_partition, "images")
+        labels_path = os.path.join(dataset_folder, dataset_partition, "labels")
+        output_path = os.path.join(dataset_folder, "extracted")
         
         if not os.path.exists(images_path) or not os.path.exists(labels_path):
-            print(f"Skipping {subset}, missing images or labels folder.")
+            print(f"Skipping {dataset_partition}, missing images or labels folder.")
             continue
         
         os.makedirs(output_path, exist_ok=True)
         
-        for label_file in os.listdir(labels_path):
+        label_files = [f for f in os.listdir(labels_path) if f.endswith(".txt")]
+        for label_file in tqdm(label_files, desc=f"Processing {dataset_partition}"):
             if label_file.endswith(".txt"):
                 image_file = label_file.replace(".txt", ".jpg")
                 image_path = os.path.join(images_path, image_file)
@@ -66,9 +66,9 @@ def extract_classes_from_dataset(dataset_path):
 
 
 if __name__ == "__main__":
-    datasets_directory = "./datasets/1. Original detection datasets"
+    dataset_folder = "./datasets/..."
 
-    for dataset in os.listdir(datasets_directory):
-        dataset = os.path.join(datasets_directory, dataset)
-        if os.path.isdir(dataset):
-            extract_classes_from_dataset(dataset)
+    for dataset_name in os.listdir(dataset_folder):
+        dataset_path = os.path.join(dataset_folder, dataset_name)
+        if os.path.isdir(dataset_path):
+            extract_classification_dataset(dataset_path)
